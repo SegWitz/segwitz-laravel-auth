@@ -1,0 +1,15 @@
+{
+    "name": "segwitz/auth",
+    "description": "Api authentication module",
+    "autoload": {
+        "psr-4": {
+            "Segwitz\\Auth\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Tayyab Rasool"
+        }
+    ],
+    "require": {}
+}
