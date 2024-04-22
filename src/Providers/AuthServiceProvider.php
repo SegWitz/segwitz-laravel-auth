@@ -27,5 +27,6 @@ class AuthServiceProvider extends ServiceProvider
             __DIR__.'/../Services' => app_path('Services/Segwitz/Services'),
             __DIR__.'/../routes' => base_path('routes/Segwitz'),
         ]);
+        
     }
 }
