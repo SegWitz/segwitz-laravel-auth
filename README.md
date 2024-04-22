@@ -2,8 +2,9 @@ This package support API authentiction via OTP for users using discord channel a
 Note: This package supports laravel 11 or greater.
 
 Prerequisites: 
-1- Laravel sanctum pckage should be installed (https://github.com/laravel/sanctum)
-2- If you want to use discord OTP this package should be installed (https://github.com/yashveersingh/laravel-discord-notifier)
+1- Laravel sanctum pckage should be installed (https://github.com/laravel/sanctum). Make sure User.php Model extends HasApiTokens trait.
+
+2- If you want to use discord OTP this package should be installed (https://github.com/yashveersingh/laravel-discord-notifier). After installing this package Make sure DISCORD_WEBHOOK is present in .env file.
 
 Instructions: 
 

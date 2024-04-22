@@ -11,5 +11,7 @@
             "name": "Tayyab Rasool"
         }
     ],
-    "require": {}
+    "require": {
+        "yashveersingh/laravel-discord-notifier": "^1.01"
+    }
 }

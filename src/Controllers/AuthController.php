@@ -37,7 +37,7 @@ class AuthController
             'otp' => $otp,
         ]);
 
-        $message = "Speakup | Hello $user->full_name, Please use this OTP $otp to activate your account.";
+        $message = env('APP_NAME') . " | Hello $user->name, Please use this OTP $otp to activate your account.";
         DiscordService::sendOtp($message);
         MailService::sendOtp($user->email,$message);   
 
@@ -103,7 +103,7 @@ class AuthController
             $user->otp = $otp;
             $user->update();
     
-            $message = "RM 0.0 | " . env('APP_NAME') . " | Hello $user->full_name, Please use this OTP $otp to reset your password.";
+            $message = "RM 0.0 | " . env('APP_NAME') . " | Hello $user->name, Please use this OTP $otp to reset your password.";
             
             DiscordService::sendOtp($message);
             MailService::sendOtp($user->email,$message);    
@@ -139,7 +139,7 @@ class AuthController
         $user->otp = $otp;
         $user->update();
 
-        $message = "RM 0.0 | " . env('APP_NAME') . " | Hello $user->full_name, Please use this OTP $otp to reset your password.";
+        $message = "RM 0.0 | " . env('APP_NAME') . " | Hello $user->name, Please use this OTP $otp to reset your password.";
         
         DiscordService::sendOtp($message);
         MailService::sendOtp($user->email,$message);
