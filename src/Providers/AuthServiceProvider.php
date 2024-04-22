@@ -21,5 +21,11 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
         $this->loadRoutesFrom(__DIR__.'/../routes/api.php');
+
+        $this->publishes([
+            __DIR__.'/../Controllers' => app_path('Http/Controllers/Segwitz/Auth'),
+            __DIR__.'/../Services' => app_path('Services/Segwitz/Services'),
+            __DIR__.'/../routes' => base_path('routes/Segwitz'),
+        ]);
     }
 }
