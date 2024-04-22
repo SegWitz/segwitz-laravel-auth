@@ -9,9 +9,39 @@ use Segwitz\Auth\Services\MailService;
 
 class AuthController
 {
-    public function __construct()
-    {
-        // dd('hit');
+    public function register(Request $request){
+        $request->validate([
+            'name' => 'required',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|confirmed',
+        ]);  
+        if($request->has('mobile_number') AND !empty($request->mobile_number)){
+            $request->validate([
+                'mobile_number' => 'required|unique:users,mobile_number',
+            ]);      
+        }
+        if($request->has('username') AND !empty($request->username)){
+            $request->validate([
+                'username' => 'required|unique:users,username',
+            ]);      
+        }
+
+        $otp = rand(1000,9999);
+        $user = User::create([
+            'name' => $request->name,
+            'username' => $request->name,
+            'email' => $request->email,
+            'mobile_number' => $request->mobile_number ?? null,
+            'username' => $request->username ?? null,
+            'password' => bcrypt($request->password),
+            'otp' => $otp,
+        ]);
+
+        $message = "Speakup | Hello $user->full_name, Please use this OTP $otp to activate your account.";
+        DiscordService::sendOtp($message);
+        MailService::sendOtp($user->email,$message);   
+
+        return response()->json(['status'=> 'success', 'message' => 'User registered successfully', 'user' => $user->refresh()], 200);
     }
 
     public function verifyOtp(Request $request){
@@ -37,40 +67,16 @@ class AuthController
 
     }
 
-    public function register(Request $request){
-        $request->validate([
-            'name' => 'required',
-            'email' => 'required',
-            'password' => 'required|confirmed',
-            'user_type' => 'required',
-        ]);  
-
-        $otp = rand(1000,9999);
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => bcrypt($request->password),
-            'type' => $request->user_type,
-            'otp' => $otp,
-        ]);
-
-        $message = "Speakup | Hello $user->full_name, Please use this OTP $otp to activate your account.";
-        DiscordService::sendOtp($message);
-        MailService::sendOtp($user->email,$message);   
-
-        return response()->json(['status'=> 'success', 'message' => 'User registered successfully', 'user' => $user->refresh()], 200);
-    }
-
     public function login(Request $request){
-        if(!$request->has('phone_number') AND !$request->has('email') AND !$request->has('username')){
+        if(!$request->has('mobile_number') AND !$request->has('email') AND !$request->has('username')){
             return response()->json(['status' => 'error', 'message' => 'Email, phone number or username is required.'], 400);
         }
-        if ($request->has('phone_number')) {
-            $checkUser = User::where('phone_number', $request->phone_number);
+        if ($request->has('mobile_number')) {
+            $checkUser = User::where('mobile_number', $request->mobile_number);
             if (!$checkUser->exists()) {
                 return response()->json(['status' => 'error', 'message' => 'User with this mobile number does not exist.'], 400);
             }
-            $credentials = $request->only(['phone_number', 'password']);
+            $credentials = $request->only(['mobile_number', 'password']);
         }
         if ($request->has('email')) {
             $checkUser = User::where('email', $request->email);
@@ -109,16 +115,15 @@ class AuthController
         $token = $user->createToken('API Token')->plainTextToken;
 
         return response()->json(['status' => 'success', 'message' => 'Login successfully.', 'user' => $user, 'access_token' => $token], 200);
-
     }
 
     public function forgotPassword(Request $request)
     {
-        if(!$request->has('phone_number') AND !$request->has('email')){
+        if(!$request->has('mobile_number') AND !$request->has('email')){
             return response()->json(['status' => 'error', 'message' => 'Email or phone number is required.'], 400);
         }
-        if ($request->has('phone_number')) {
-            $user = User::where('phone_number', $request->phone_number)->first();
+        if ($request->has('mobile_number')) {
+            $user = User::where('mobile_number', $request->mobile_number)->first();
             if (!$user) {
                 return response()->json(['status' => 'error', 'message' => 'User with this mobile number does not exist.'], 400);
             }

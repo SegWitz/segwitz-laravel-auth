@@ -7,6 +7,9 @@ use Illuminate\Support\Facades\Mail;
 
 class MailService{
     public static function sendOtp($email, $message){
+        if(!env('EMAIL_OTP')){
+            return false;
+        }
         $to = $email;
         $subject = env('APP_NAME') . ' OTP';
         $emailMessage = $message;
